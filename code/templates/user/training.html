@@ -1,16 +1,238 @@
-
 {% extends "user/userbase.html" %}
 {% block title %}
 Student Flask App with CRUD
 {% endblock %}
 {% block content %}
-<h1>Welcome to my traing webpage</h1>
-<table border="2px">
-    <tr>
-      <tr><td>accuracy:</td><td>{{accuracy|safe}}</td></tr>
-      <tr><td>error:</td><td>{{errors|safe}}</td></tr>
-      
-    </tr>
 
+<style>
+  body {
+    background-color: #f4f7f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: clamp(2rem, 5vw, 3rem); /* responsive font size */
+    font-weight: bold;
+    margin: 40px 20px;
+    background: linear-gradient(90deg, #3498db, #8e44ad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.8s ease-in-out;
+  }
+
+  .results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .metrics-table {
+    width: 100%;
+    max-width: 600px;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    background: #fff;
+  }
+
+  .metrics-table th,
+  .metrics-table td {
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: clamp(14px, 2vw, 16px); /* responsive font */
+  }
+
+  .metrics-table th {
+    background: linear-gradient(135deg, #13856f, #03493b);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+  }
+
+  .metrics-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .metrics-table tbody tr:hover {
+    background: #e8f5e9;
+    transition: 0.3s ease-in-out;
+  }
+
+  /* Chart Styling */
+  .chart-container {
+    width: 100%;
+    max-width: 900px;
+    height: 60vw; /* make height responsive to width */
+    max-height: 600px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+  }
+
+  .fade-in-up {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  .slide-in-up {
+    animation: slideUp 0.8s ease-out forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateX(-4vw); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Media Queries */
+  @media (max-width: 768px) {
+    .metrics-table th, .metrics-table td {
+      padding: 10px 12px;
+    }
+    .chart-container {
+      height: 50vw;
+      padding: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: clamp(1.5rem, 6vw, 2rem);
+      margin: 30px 10px;
+    }
+    .chart-container {
+      height: 70vw;
+      padding: 10px;
+    }
+  }
+</style>
+
+<h1>Welcome to my training webpage</h1>
+
+<div class="results-container">
+  <table class="metrics-table">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Accuracy</td>
+        <td>{{ accuracy|safe }}</td>
+      </tr>
+      <tr>
+        <td>Error</td>
+        <td>{{ errors|safe }}</td>
+      </tr>
+    </tbody>
   </table>
+
+  <div class="chart-container">
+    <canvas id="metrics-chart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  window.onload = function () {
+    const metrics = {
+      accuracy: {{ accuracy|safe }},
+      error: {{ errors|safe }}
+    };
+
+    const ctx = document.getElementById('metrics-chart').getContext('2d');
+    let barThicknessValue;
+    if (window.innerWidth >= 1024) {
+      barThicknessValue = 80; // desktop
+    } else if (window.innerWidth >= 768) {
+      barThicknessValue = 50; // tablet
+    } else {
+      barThicknessValue = 30; // mobile
+    }
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Accuracy', 'Error'],
+        datasets: [{
+          label: 'Model Performance',
+          data: [metrics.accuracy, metrics.error],
+          backgroundColor: ['#13856f', '#F44336'],
+          borderRadius: 8,
+          barThickness: barThicknessValue,
+          maxBarThickness: 90
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: { display: true, text: 'Percentage (%)', font: { size: 16 } },
+            ticks: { font: { size: 14 } },
+            grid: { display: false }
+          },
+          x: {
+            ticks: { font: { size: 14 } },
+            grid: { display: false }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Model Metrics Visualization', font: { size: 20 } },
+          tooltip: {
+            enabled: true,
+            titleFont: { size: 14 },
+            bodyFont: { size: 14 },
+            callbacks: {
+              label: function(context) {
+                return context.label + ': ' + context.formattedValue + '%';
+              }
+            }
+          }
+        },
+        hover: { mode: 'nearest', intersect: true }
+      }
+    });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.remove("fade-in-up", "slide-in-up");  // reset
+          void entry.target.offsetWidth;  // force reflow
+          if (entry.target.classList.contains("metrics-table")) {
+            entry.target.classList.add("fade-in-up");
+          } else if (entry.target.classList.contains("chart-container")) {
+            entry.target.classList.add("slide-in-up");
+          }
+        }
+      });
+    }, { threshold: 0.2 });
+
+    // Observe table
+    document.querySelectorAll('.metrics-table').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Observe chart
+    document.querySelectorAll('.chart-container').forEach(el => {
+      observer.observe(el);
+    });
+  };
+</script>
 {% endblock %}
