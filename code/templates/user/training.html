@@ -79,6 +79,7 @@ Student Flask App with CRUD
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+    animation: slideUp 0.8s ease-in-out;
   }
 
   .fade-in-up {
@@ -213,12 +214,10 @@ Student Flask App with CRUD
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.remove("fade-in-up", "slide-in-up");  // reset
+          entry.target.classList.remove("fade-in-up");  // reset
           void entry.target.offsetWidth;  // force reflow
           if (entry.target.classList.contains("metrics-table")) {
             entry.target.classList.add("fade-in-up");
-          } else if (entry.target.classList.contains("chart-container")) {
-            entry.target.classList.add("slide-in-up");
           }
         }
       });
