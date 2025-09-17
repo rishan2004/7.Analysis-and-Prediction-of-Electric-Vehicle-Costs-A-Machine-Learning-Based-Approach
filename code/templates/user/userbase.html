@@ -5,16 +5,92 @@
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
     </head>
+    <style>
+        .navbar {
+            width: 100%;
+            background: #464646;
+            color: #fff;
+            font-size: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between; /* This will spread out the items */
+            align-items: center;
+            padding: 0 5px;
+            height: 58px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap:10px;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.13rem;
+            padding-right: 12px;
+            transition: color 0.15s;
+        }
+
+        .navbar-item {
+                color: #fff;
+                text-decoration: none;
+                opacity: 0.9;
+                font-size: .9rem;
+                padding: 0 2px; /* Adds space between links */
+                transition: background-color 0.3s, color 0.3s;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                font-weight: bold;
+            }
+        .navbar-brand:hover,
+        .navbar-item:hover {
+            color: #d1b18d;
+            opacity: 1;
+        }
+
+        .navbar-right {
+            padding-right: 1.2rem;
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                height: auto;
+                padding: 10px 8px;
+            }
+            .navbar-right {
+                margin-top: 6px;
+                font-size: 1.05rem;
+            }
+        }
+        .body-content {
+            margin-top: 58px;  /* same or a little bigger than navbar height */
+        }
+    </style>
 
     <body>
         <div class="navbar">
-            <a href="{{ url_for('home') }}" class="navbar-item">Home</a>
-            <a href="{{ url_for('dataset') }}" class="navbar-item">Dataset</a>
-            <a href="{{url_for('training')}}" class="navbar-item">training</a>
-            <a href="{{url_for('predication')}}"  class="navbar-item">predict</a>
-            <a href="{{url_for('locations')}}" class="navbar-item">EV Charging Locations</a>
-            <a href="{{url_for('dashboard')}}" class="navbar-item">EV Station Dashboard</a>
-            <a href="{{ url_for('home') }}" class="navbar-item">logout</a>
+            <div class="navbar-left">
+                <a href="{{ url_for('home') }}" class="navbar-item">Home</a>
+                <a href="{{ url_for('dataset') }}" class="navbar-item">Dataset</a>
+                <a href="{{ url_for('training') }}" class="navbar-item">Training</a>
+                <a href="{{ url_for('predication') }}" class="navbar-item">Predict</a>
+                <a href="{{ url_for('locations') }}" class="navbar-item">EV Charging Locations</a>
+                <a href="{{ url_for('dashboard') }}" class="navbar-item">EV Station Dashboard</a>
+            </div>
+            <div class="navbar-right">
+                <a href="{{ url_for('home') }}" class="navbar-item">Logout</a>
+            </div>
         </div>
 
         
@@ -35,3 +111,5 @@
     
     </body>
 </html>
+
+
