@@ -19,3 +19,5 @@ plotly==5.17.0
 seaborn==0.12.2
 cython==3.0.2
 folium==0.15.1
+# Excel file support
+openpyxl
