@@ -9,11 +9,16 @@ from flask import Flask
 from flask import render_template
 from flask import request,session, flash
 #from ev_stations.maps import ev_map
-from .ev_stations.maps import ev_map as generate_map 
-from ev_stations.dash import gen_dashboard
+from code.ev_stations.maps import ev_map as generate_map 
+import sys
+import os
+
+sys.path.append(os.path.dirname(__file__))
+from code.ev_stations.dash import gen_dashboard
 
 import sqlite3
-import os 
+
+ 
 
 app = Flask(__name__)
 
@@ -535,5 +540,6 @@ def contact():
 
 
 if __name__ == '__main__':
-    app.run(debug=True,port=8000)
+    app.run(debug=True, host="0.0.0.0", port=8000)
+
 
